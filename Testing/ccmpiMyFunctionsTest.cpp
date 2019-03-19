@@ -95,6 +95,7 @@ TEST_CASE( "2. SumSeries Test", "[CW2]" ) {
             REQUIRE(std::string(e.what()) == errmsg2);
             thrown=true;
         }
+        REQUIRE(thrown);
     }
 
     SECTION("Check that we can handle arrays which will not overflow") {
@@ -108,4 +109,45 @@ TEST_CASE( "2. SumSeries Test", "[CW2]" ) {
 
 
 TEST_CASE( "3. EvaluateGregoryLeibnizSeries Test", "[CW2]" ) {
+    // Expected error messages
+    std::string errmsg1 = "Must choose positive starting & finishing term"
+                          "numbers!";
+
+    std::string errmsg2 = "Must choose a finishingTermNumber >= "
+                          "startingTermNumber";
+
+
+    SECTION("Check that we can handle non-positive starting/finishing terms") {
+        bool thrown = false;
+        try {
+            ccmpi::EvaluateGregoryLeibnizSeries(0, 0);
+        } catch (const std::exception &e) {
+            REQUIRE(std::string(e.what()) == errmsg1);
+            thrown = true;
+        }
+        REQUIRE(thrown);
+    }
+
+    SECTION("Check that we can handle incorrect order of start/finishing terms") {
+        bool thrown = false;
+        try {
+            ccmpi::EvaluateGregoryLeibnizSeries(10, 1);
+        } catch (const std::exception &e) {
+            REQUIRE(std::string(e.what()) == errmsg2);
+            thrown = true;
+        }
+        REQUIRE(thrown);
+    }
+
+    SECTION("Check that we can handle equal start/finish term numbers") {
+        double expected = 1;
+        auto res = ccmpi::EvaluateGregoryLeibnizSeries(1, 1);
+        REQUIRE(res == expected);
+    }
+
+    SECTION("Check that we can correctly handle a series of terms") {
+        double expected = 1 - 1./3;
+        auto res = ccmpi::EvaluateGregoryLeibnizSeries(1, 2);
+        REQUIRE(res == expected);
+    }
 }

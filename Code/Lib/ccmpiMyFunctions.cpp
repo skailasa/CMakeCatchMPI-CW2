@@ -15,6 +15,7 @@
 #include "ccmpiMyFunctions.h"
 #include <iostream>
 #include <omp.h>
+#include <math.h>
 
 namespace ccmpi {
 
@@ -49,7 +50,12 @@ GetVectorOfSeriesIndexPairs(const unsigned int& numberOfThreads,
   {
     unsigned long int first = 0;
     unsigned long int last = 0;
-    GetFirstAndLastIndex(numberOfThreads, i, elementsPerThread, numberOfElements, first, last);
+    GetFirstAndLastIndex(numberOfThreads,
+                         i,
+                         elementsPerThread,
+                         numberOfElements,
+                         first,
+                         last);
     v.push_back(std::pair<unsigned long int, unsigned long int>(first, last));
 
     std::cout << "For " << numberOfElements << " elements, "
@@ -133,7 +139,35 @@ double EvaluateGregoryLeibnizSeries(unsigned long int startingTermNumber,
                                     unsigned long int finishingTermNumber
                                    )
 {
-  return 0.0;
+    // Error messages
+    std::string errmsg1 = "Must choose positive starting & finishing term"
+                          "numbers!";
+
+    std::string errmsg2 = "Must choose a finishingTermNumber >= "
+                          "startingTermNumber";
+
+
+    if (startingTermNumber <= 0 || finishingTermNumber <= 0) {
+        throw std::runtime_error(errmsg1);
+    } if (startingTermNumber > finishingTermNumber) {
+        throw std::runtime_error(errmsg2);
+    } if (startingTermNumber == finishingTermNumber) {
+        unsigned long int k = startingTermNumber - 1;
+        double res = pow(-1., k) / (2 * k + 1);
+
+        return res;
+
+    } else {
+        double res = 0;
+        for (unsigned long int k = startingTermNumber - 1;
+             k < finishingTermNumber;
+             k++) {
+
+            std::cout << "K: " << k << std::endl;
+            res += pow(-1., k) / (2 * k + 1);
+        }
+        return res;
+    }
 }
 
 
@@ -142,23 +176,6 @@ double EvaluatePiUsingOpenMP(unsigned long int numberOfElements)
 {
   return 0.0;
 }
-
-
-void test() {
-        // Pointer initialisation
-        unsigned long int* p = NULL;
-
-        p = new(std::nothrow) unsigned long int;
-        if (!p) {
-            std::cout << "Allocation of memory failed" << std::endl;
-        } else {
-            // Store value at allocated address
-            *p = 4294967295;
-            std::cout << "Value of p: " << *p << std::endl;
-        }
-
-        delete p;
-    }
 
 } // end namespace
 
