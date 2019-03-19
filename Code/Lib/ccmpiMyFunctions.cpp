@@ -63,10 +63,21 @@ GetVectorOfSeriesIndexPairs(const unsigned int& numberOfThreads,
 
 
 //-----------------------------------------------------------------------------
-void FillSeries(unsigned long int* const values, unsigned long int const& numberOfValues)
+void FillSeries(unsigned long int* const values,
+                unsigned long int const& numberOfValues)
 {
-    for (unsigned int i = 0; i < numberOfValues; i++) {
-        values[i] = i;
+    std::string errmsg = "Invalid number of values, must choose between 1 and "
+                         "100000. i.e. between 1b and 800kb worth of data.";
+
+    // Check whether array has been pre-allocated (>0b) or whether length of
+    // array leads to segfaults on many compilers/OSs (800kb or 100000 unsigned
+    // long ints).
+    if (numberOfValues <= 0 || numberOfValues > 100000) {
+        throw std::runtime_error(errmsg);
+    } else {
+        for (unsigned int i = 0; i < numberOfValues; i++) {
+            values[i] = i;
+        }
     }
 }
 
@@ -75,19 +86,37 @@ void FillSeries(unsigned long int* const values, unsigned long int const& number
 unsigned long int SumSeries(const unsigned long int* const values,
                             unsigned long int const & numberOfValues)
 {
-    bool evaluated = false;
-    int i = 0;
-    unsigned  long int sum = 0;
+    std::string errmsg1 = "Invalid number of values, must choose between 1 and "
+                         "100000. i.e. between 1b and 800kb worth of data.";
+    std::string errmsg2 = "Sum total too high, integer overflow!";
 
-    while (!evaluated) {
-        sum += values[i];
-        i+=1;
-        if (i == numberOfValues) {
-            evaluated = true;
+    // Check whether array has been pre-allocated (>0b) or whether length of
+    // array leads to segfaults on many compilers/OSs (800kb or 100000 unsigned
+    // long ints).
+    if (numberOfValues <= 0 || numberOfValues > 100000) {
+        throw std::runtime_error(errmsg1);
+    } else {
+
+        bool evaluated = false;
+        int i = 0;
+        unsigned long int sum = 0;
+        unsigned long int  largestInt = 4294967295; // 2^32
+
+        while (!evaluated) {
+            if (sum <= largestInt - values[i]) {
+                sum += values[i];
+                i+=1;
+                if (i == numberOfValues) {
+                    evaluated = true;
+                }
+            } else {
+                // Check that the sum hasn't overflowed, against the maximum
+                // integer size we can expect from most devices.
+                throw std::runtime_error(errmsg2);
+            }
         }
+        return sum;
     }
-
-    return sum;
 }
 
 
