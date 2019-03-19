@@ -66,15 +66,24 @@ GetVectorOfSeriesIndexPairs(const unsigned int& numberOfThreads,
 void FillSeries(unsigned long int* const values,
                 unsigned long int const& numberOfValues)
 {
-    std::string errmsg = "Invalid number of values, must choose between 1 and "
-                         "100000. i.e. between 1b and 800kb worth of data.";
+    std::string errmsg1 = "Invalid number of values, must pre-allocate an array"
+                          "with at least 1 element";
 
-    // Check whether array has been pre-allocated (>0b) or whether length of
-    // array leads to segfaults on many compilers/OSs (800kb or 100000 unsigned
-    // long ints).
-    if (numberOfValues <= 0 || numberOfValues > 100000) {
-        throw std::runtime_error(errmsg);
-    } else {
+    std::string errmsg2 = "Too many values! Must pass in array with between 1"
+                          "and 2^32 values";
+
+    unsigned long int  largestInt = 4294967295; // 2^32
+
+    // Check whether array has been pre-allocated (>0 elements)
+    if (numberOfValues <= 0) {
+        throw std::runtime_error(errmsg1);
+    }
+    // Check whether array size will result in integer overflow of index values
+    // At least from most devices.
+    if (numberOfValues > largestInt) {
+        throw std::runtime_error(errmsg2);
+    }
+    else {
         for (unsigned int i = 0; i < numberOfValues; i++) {
             values[i] = i;
         }
@@ -86,21 +95,20 @@ void FillSeries(unsigned long int* const values,
 unsigned long int SumSeries(const unsigned long int* const values,
                             unsigned long int const & numberOfValues)
 {
-    std::string errmsg1 = "Invalid number of values, must choose between 1 and "
-                         "100000. i.e. between 1b and 800kb worth of data.";
+    std::string errmsg1 = "Invalid number of values, must pre-allocate an array"
+                          "with at least 1 element";
+
     std::string errmsg2 = "Sum total too high, integer overflow!";
 
-    // Check whether array has been pre-allocated (>0b) or whether length of
-    // array leads to segfaults on many compilers/OSs (800kb or 100000 unsigned
-    // long ints).
-    if (numberOfValues <= 0 || numberOfValues > 100000) {
+    // Check whether array has been pre-allocated (>0b)
+    if (numberOfValues <= 0) {
         throw std::runtime_error(errmsg1);
     } else {
 
+        unsigned long int  largestInt = 4294967295; // 2^32
         bool evaluated = false;
         int i = 0;
         unsigned long int sum = 0;
-        unsigned long int  largestInt = 4294967295; // 2^32
 
         while (!evaluated) {
             if (sum <= largestInt - values[i]) {
@@ -135,4 +143,22 @@ double EvaluatePiUsingOpenMP(unsigned long int numberOfElements)
   return 0.0;
 }
 
+
+void test() {
+        // Pointer initialisation
+        unsigned long int* p = NULL;
+
+        p = new(std::nothrow) unsigned long int;
+        if (!p) {
+            std::cout << "Allocation of memory failed" << std::endl;
+        } else {
+            // Store value at allocated address
+            *p = 4294967295;
+            std::cout << "Value of p: " << *p << std::endl;
+        }
+
+        delete p;
+    }
+
 } // end namespace
+
