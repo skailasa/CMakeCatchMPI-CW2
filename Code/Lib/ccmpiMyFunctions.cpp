@@ -163,7 +163,6 @@ double EvaluateGregoryLeibnizSeries(unsigned long int startingTermNumber,
              k < finishingTermNumber;
              k++) {
 
-            std::cout << "K: " << k << std::endl;
             res += pow(-1., k) / (2 * k + 1);
         }
         return res;
@@ -174,7 +173,24 @@ double EvaluateGregoryLeibnizSeries(unsigned long int startingTermNumber,
 //-----------------------------------------------------------------------------
 double EvaluatePiUsingOpenMP(unsigned long int numberOfElements)
 {
-  return 0.0;
+    std::string errmsg = "Must select a positive number of elements";
+
+    if (numberOfElements <= 0) {
+        throw std::runtime_error(errmsg);
+    } else {
+        int k;
+        double res = 0;
+
+        #pragma omp parallel private(k), reduction(+:res)
+        {
+            #pragma omp for
+            for (k = 0; k < numberOfElements; k++) {
+                res += pow(-1., k) / (2 * k + 1);
+            }
+        }
+
+        return res*4;
+    }
 }
 
 } // end namespace

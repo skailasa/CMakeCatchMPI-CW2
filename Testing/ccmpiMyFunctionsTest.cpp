@@ -85,7 +85,7 @@ TEST_CASE( "2. SumSeries Test", "[CW2]" ) {
         }
         REQUIRE(thrown);
     }
-
+ 
     SECTION("Check that we can handle sums that result in numerical overflow") {
         unsigned long int vals[2]={1, 4294967295};
         bool thrown = false;
