@@ -45,9 +45,8 @@ TEST_CASE( "6. MPI Triangle Number Test", "[CW2]" ) {
   MPI_Comm_rank(MPI_COMM_WORLD, &rank);
   MPI_Comm_size(MPI_COMM_WORLD, &size);
 
-  const long int numberOfElements = 10; // you can leave this hard-coded for now, for simplicity.
+  const long int numberOfElements = 1000; // you can leave this hard-coded for now, for simplicity.
   const long int elementsPerProcess = numberOfElements / size;
-
 
   // Defensive check - this coursework must have the numberOfElements
   // as an exact multiple of the number of processes, again for simplicity.
@@ -76,6 +75,8 @@ TEST_CASE( "6. MPI Triangle Number Test", "[CW2]" ) {
 
     // 1. Fill originalArray with 1...n  (implemented in Q1)
     ccmpi::FillSeries(originalArray, numberOfElements);
+
+    std::cout << "First item in series: " << originalArray[0] << std::endl;
 
     // 2. Check the sum of the series.   (implemented in Q1)
     long int expectedTotal = ccmpi::SumSeries(originalArray, numberOfElements);

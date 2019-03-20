@@ -59,7 +59,7 @@ TEST_CASE( "1. FillSeries Test", "[CW2]" ) {
         ccmpi::FillSeries(vals, 3);
 
         for (int i=0; i<3; i++) {
-            REQUIRE(vals[i] == i);
+            REQUIRE(vals[i] == i+1);
         }
     }
 }

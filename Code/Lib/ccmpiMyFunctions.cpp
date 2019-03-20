@@ -91,7 +91,7 @@ void FillSeries(unsigned long int* const values,
     }
     else {
         for (unsigned int i = 0; i < numberOfValues; i++) {
-            values[i] = i;
+            values[i] = i+1;
         }
     }
 }
