@@ -18,24 +18,40 @@
 #include <iostream>
 #include <mpi.h>
 
+
 TEST_CASE( "5. MPI Pi Test", "[CW2]" ) {
 
   int rank = 0;
   int size = 0;
   double sum = 0;
   double pi = 0;
+  int N = 1000;
   unsigned long int indexes[2];
 
   MPI_Comm_rank(MPI_COMM_WORLD, &rank);
   MPI_Comm_size(MPI_COMM_WORLD, &size);
 
   std::vector<std::pair<unsigned long int, unsigned long int> > v
-    = ccmpi::GetVectorOfSeriesIndexPairs(size, 5000000000);
+          = ccmpi::GetVectorOfSeriesIndexPairs(size, N);
 
   /////////////////////////////////////////////////////////////////////////////
   // Start of your code
   /////////////////////////////////////////////////////////////////////////////
 
+  // Send each process the total number of elements
+  MPI_Bcast(&N, 1, MPI_INT, 0, MPI_COMM_WORLD);
+
+  int startIteration = rank*N/size;
+  int endIteration = startIteration + N/size;
+
+  // Calculate Gregory-Leibniz Series terms
+  double tmp;
+
+  for (int k=startIteration; k<endIteration; k++) {
+    tmp += pow(-1., k) / (2 * k + 1);
+  }
+
+  MPI_Reduce(&tmp, &pi, 1, MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
 
   /////////////////////////////////////////////////////////////////////////////
   // End of your code
@@ -47,7 +63,7 @@ TEST_CASE( "5. MPI Pi Test", "[CW2]" ) {
   std::cout << "Process " << rank << ", computed sum=" << sum << ", pi=" << pi << std::endl;
   if (rank == 0)
   {
-    REQUIRE(pi == Approx( 3.1415926535 ));
+    REQUIRE(pi == Approx(3.14159).epsilon(0.01));
   }
   else
   {
