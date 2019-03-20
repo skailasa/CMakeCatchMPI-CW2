@@ -76,12 +76,10 @@ TEST_CASE( "6. MPI Triangle Number Test", "[CW2]" ) {
     // 1. Fill originalArray with 1...n  (implemented in Q1)
     ccmpi::FillSeries(originalArray, numberOfElements);
 
-    std::cout << "First item in series: " << originalArray[0] << std::endl;
-
     // 2. Check the sum of the series.   (implemented in Q1)
-    long int expectedTotal = ccmpi::SumSeries(originalArray, numberOfElements);
+    long int sumOfSeries = ccmpi::SumSeries(originalArray, numberOfElements);
+    REQUIRE(sumOfSeries == expectedTotal);
 
-    std::cout << "Expected total (1): " << expectedTotal <<std::endl;
     /////////////////////////////////////////////////////////////////////////////
     // End of your code. [1 mark]
     /////////////////////////////////////////////////////////////////////////////
@@ -130,9 +128,8 @@ TEST_CASE( "6. MPI Triangle Number Test", "[CW2]" ) {
   //
 
   if (rank == 0) {
-    long int expectedTotal = ccmpi::SumSeries(originalArray, numberOfElements);
     unsigned long int sumBySummingEachSum = ccmpi::SumSeries(sumsOfSubsets, size);
-    long int sumBySummingReturnedMemory = ccmpi::SumSeries(repopulatedArray, numberOfElements);
+    unsigned long int sumBySummingReturnedMemory = ccmpi::SumSeries(repopulatedArray, numberOfElements);
 
     REQUIRE(sumBySummingEachSum == expectedTotal);
     REQUIRE(sumBySummingReturnedMemory == expectedTotal);
