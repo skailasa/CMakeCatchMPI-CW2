@@ -86,7 +86,7 @@ void FillSeries(unsigned long int* const values,
     }
     // Check whether array size will result in integer overflow of index values
     // At least from most devices.
-    if (numberOfValues > largestInt) {
+    if (numberOfValues >= largestInt) {
         throw std::runtime_error(errmsg2);
     }
     else {
@@ -106,7 +106,7 @@ unsigned long int SumSeries(const unsigned long int* const values,
 
     std::string errmsg2 = "Sum total too high, integer overflow!";
 
-    // Check whether array has been pre-allocated (>0b)
+    // Check whether array has been pre-allocated (>0 elements)
     if (numberOfValues <= 0) {
         throw std::runtime_error(errmsg1);
     } else {

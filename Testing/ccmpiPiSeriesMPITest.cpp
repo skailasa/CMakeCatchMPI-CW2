@@ -59,10 +59,12 @@ TEST_CASE( "5. MPI Pi Test", "[CW2]" ) {
   std::cout << "Process " << rank << ", computed sum=" << sum << ", pi=" << pi << std::endl;
   if (rank == 0)
   {
+    // Check that we get convergence to within 1% of value
     REQUIRE(pi == Approx(3.14159).epsilon(0.01));
   }
   else
   {
-    REQUIRE(pi == Approx( 0.0 )); // i.e. non-root nodes won't have the correct answer.
+    // i.e. non-root nodes won't have the correct answer.
+    REQUIRE(pi == Approx(0.0));
   }
 }
