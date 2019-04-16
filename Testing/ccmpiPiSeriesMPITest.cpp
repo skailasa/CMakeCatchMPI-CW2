@@ -38,16 +38,10 @@ TEST_CASE( "5. MPI Pi Test", "[CW2]" ) {
   // Start of your code
   /////////////////////////////////////////////////////////////////////////////
 
-  // Send each process the total number of elements
-  MPI_Bcast(&N, 1, MPI_INT, 0, MPI_COMM_WORLD);
-
-  unsigned long int startIteration = rank*N/size + 1;
-  unsigned long int endIteration = startIteration + N/size;
-
   // Calculate Gregory-Leibniz Series terms
-  double tmp = ccmpi::EvaluateGregoryLeibnizSeries(startIteration, endIteration);
+  sum = ccmpi::EvaluateGregoryLeibnizSeries(v[rank].first, v[rank].second);
 
-  MPI_Reduce(&tmp, &pi, 1, MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
+  MPI_Reduce(&sum, &pi, 1, MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
 
   /////////////////////////////////////////////////////////////////////////////
   // End of your code
