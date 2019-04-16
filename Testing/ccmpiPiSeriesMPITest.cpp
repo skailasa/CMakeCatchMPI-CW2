@@ -37,6 +37,7 @@ TEST_CASE( "5. MPI Pi Test", "[CW2]" ) {
   /////////////////////////////////////////////////////////////////////////////
   // Start of your code
   /////////////////////////////////////////////////////////////////////////////
+  std::cout << "rank: " << rank << " v first " << v[0].first << std::endl;
 
   // Calculate Gregory-Leibniz Series terms
   sum = ccmpi::EvaluateGregoryLeibnizSeries(v[rank].first, v[rank].second);
